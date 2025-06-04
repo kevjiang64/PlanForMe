@@ -2,9 +2,9 @@
 // npm install @google/genai mime
 // npm install -D @types/node
 
-import { GoogleGenAI } from "@google/genai";
+import { GenerateContentResponse, GoogleGenAI } from "@google/genai";
 
-export async function main() {
+export async function chatSession(prompt) {
   const ai = new GoogleGenAI({
     apiKey: import.meta.env.VITE_GOOGLE_GEMINI_API_KEY,
   });
@@ -17,19 +17,23 @@ export async function main() {
       role: "user",
       parts: [
         {
-          text: `Generate a travel itinerary for a trip to Paris for 1 day.`,
+          text: prompt,
         },
       ],
     },
   ];
 
-  const response = await ai.models.generateContentStream({
-    model,
+  // const response = await ai.models.generateContentStream({
+  //   model,
+  //   config,
+  //   contents,
+  // });
+
+  const response = await ai.models.generateContent({
+    model: "gemini-2.0-flash",
     config,
     contents,
   });
-  let fileIndex = 0;
-  for await (const chunk of response) {
-    console.log(chunk.text);
-  }
+
+  return response.text;
 }

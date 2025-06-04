@@ -1,25 +1,104 @@
 import React, { useEffect, useState } from "react";
 import GooglePlacesAutocomplete from "react-google-places-autocomplete";
 import { Input } from "../components/ui/input";
-import { SelectBudgetOptions, SelectMembersList } from "../constants/options";
+import {
+  AI_PROMPT,
+  SelectBudgetOptions,
+  SelectMembersList,
+} from "../constants/options";
 import { Button } from "../components/ui/button";
 import { toast } from "sonner";
-import { main } from "../service/AIModal"; // Adjust the import path as necessary
+import { chatSession } from "../service/AIModal";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { FcGoogle } from "react-icons/fc";
+import { useGoogleLogin } from "@react-oauth/google";
+import axios from "axios";
+import { doc, setDoc } from "firebase/firestore";
+import { db } from "../service/firebaseConfig"; // Adjust the import path as necessary
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import { useNavigate } from "react-router-dom";
 
 const CreateTrip = () => {
   const [place, setPlace] = useState();
 
   const [formData, setFormData] = useState([]);
 
+  const [openDialogue, setOpenDialogue] = useState(false);
+
+  const [loading, setLoading] = useState(false);
+
+  const navigate = useNavigate();
+
   const handleInputChange = (name, value) => {
     setFormData({ ...formData, [name]: value });
   };
+
+  const login = useGoogleLogin({
+    onSuccess: (codeResponse) => {
+      console.log(codeResponse);
+      GetUserProfile(codeResponse);
+    },
+    onError: (error) => {
+      console.error("Login Failed:", error);
+    },
+  });
 
   useEffect(() => {
     console.log("Form Data Updated:", formData);
   }, [formData]);
 
+  const SaveAiTrip = async (trip) => {
+    setLoading(true);
+
+    const user = JSON.parse(localStorage.getItem("user"));
+    const docId = Date.now().toString();
+
+    await setDoc(doc(db, "AITrips", docId), {
+      userSelection: formData,
+      tripData: JSON.parse(trip),
+      userEmail: user?.email,
+      id: docId,
+    });
+
+    setLoading(false);
+
+    navigate(`/view-trip/${docId}`);
+  };
+
+  const GetUserProfile = async (tokenInfo) => {
+    axios
+      .get(
+        `https://www.googleapis.com/oauth2/v3/userinfo?access_token=${tokenInfo.access_token}`,
+        {
+          headers: {
+            Authorization: `Bearer ${tokenInfo.access_token}`,
+            Accept: "application/json",
+          },
+        }
+      )
+      .then((response) => {
+        console.log("User Profile:", response.data);
+        setOpenDialogue(false);
+        localStorage.setItem("user", JSON.stringify(response.data));
+      });
+  };
+
   const OnGenerateTrip = async () => {
+    setLoading(true);
+
+    const user = localStorage.getItem("user");
+
+    if (!user) {
+      setOpenDialogue(true);
+      return;
+    }
+
     if (
       !formData.destination ||
       !formData.noOfDays ||
@@ -30,17 +109,24 @@ const CreateTrip = () => {
       return;
     }
 
-    const tripDetails = {
-      destination: formData.destination,
-      noOfDays: formData.noOfDays,
-      budget: formData.budget,
-      members: formData.members,
-    };
+    const FINAL_PROMPT = AI_PROMPT.replace(
+      "{location}",
+      formData?.destination?.label
+    )
+      .replace("{totalDays}", formData?.noOfDays)
+      .replace("{traveler}", formData?.members)
+      .replace("{budget}", formData?.budget)
+      .replace("{totalDays}", formData?.noOfDays);
 
-    console.log("Trip Details:", tripDetails);
-    // Here you can add the logic to send this data to your backend or API
+    console.log("Final Prompt:", FINAL_PROMPT);
 
-    await main();
+    const result = await chatSession(FINAL_PROMPT);
+
+    console.log(result);
+
+    setLoading(false);
+
+    SaveAiTrip(result);
   };
 
   return (
@@ -124,8 +210,42 @@ const CreateTrip = () => {
       </div>
 
       <div className="my-10 justify-end flex">
-        <Button onClick={() => OnGenerateTrip()}>Generate Trip</Button>
+        <Button disabled={loading} onClick={() => OnGenerateTrip()}>
+          {loading ? (
+            <AiOutlineLoading3Quarters className="h-7 w-7 animate-spin"></AiOutlineLoading3Quarters>
+          ) : (
+            "Generate Trip"
+          )}
+        </Button>
       </div>
+
+      <Dialog open={openDialogue}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>
+              <img src="/logo.svg"></img>
+            </DialogTitle>
+            <DialogDescription>
+              <h2 className="font-bold text-lg mt-7">Sign in with Google</h2>
+              <p>Sign into the App with Google Authentication securely.</p>
+
+              <Button
+                onClick={() => login()}
+                className="w-full mt-5 flex gap-4 items-center"
+              >
+                {loading ? (
+                  "test"
+                ) : (
+                  <>
+                    <FcGoogle className="h-7 w-7" />
+                    Sign in with Google
+                  </>
+                )}
+              </Button>
+            </DialogDescription>
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
