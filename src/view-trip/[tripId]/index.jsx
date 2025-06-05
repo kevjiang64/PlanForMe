@@ -6,7 +6,6 @@ import InfoSection from "../components/InfoSection";
 import { Hotel } from "lucide-react";
 import Hotels from "../components/Hotels";
 import PlacesToVisit from "../components/PlacesToVisit";
-import Footer from "../components/Footer";
 
 const ViewTrip = () => {
   const { tripId } = useParams();
@@ -34,9 +33,9 @@ const ViewTrip = () => {
       {/*Info Section*/}
       <InfoSection trip={trip} />
       {/*Hotels*/}
-      <Hotels trip={trip} />
+      <Hotels hotels={trip?.tripData?.[0]?.travelPlan?.hotelOptions} />
       {/*Daily Itinerary*/}
-      <PlacesToVisit trip={trip} />
+      <PlacesToVisit itinerary={trip?.tripData?.[0]?.travelPlan?.itinerary} />
     </div>
   );
 };

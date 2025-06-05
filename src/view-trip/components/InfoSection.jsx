@@ -1,8 +1,5 @@
-import React from "react";
-import { IoIosSend } from "react-icons/io";
-import { Button } from "../../components/ui/button";
-
 const InfoSection = ({ trip }) => {
+  console.log(trip);
   return (
     <div>
       <img
@@ -23,13 +20,10 @@ const InfoSection = ({ trip }) => {
               💰 {trip.userSelection?.budget} Budget
             </h2>
             <h2 className="p-2 px-3 bg-gray-200 rounded-full text-gray-500 text-xs md:text-md">
-              🧑‍🤝‍🧑No. Of Traveler {trip.userSelection?.traveler}
+              🧑‍🤝‍🧑No. Of Traveler: {trip.userSelection?.members}
             </h2>
           </div>
         </div>
-        <Button>
-          <IoIosSend />
-        </Button>
       </div>
     </div>
   );

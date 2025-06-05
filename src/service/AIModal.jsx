@@ -11,7 +11,7 @@ export async function chatSession(prompt) {
   const config = {
     responseMimeType: "application/json",
   };
-  const model = "gemini-2.5-flash-preview-05-20";
+  const model = "gemini-1.5-flash";
   const contents = [
     {
       role: "user",
