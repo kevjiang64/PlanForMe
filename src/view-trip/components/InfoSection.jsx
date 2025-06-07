@@ -1,9 +1,35 @@
+import { useEffect } from "react";
+import { GetPlacesDetails } from "../../service/GlobalApi";
+import { PHOTO_REF_URL } from "../../service/GlobalApi";
+
 const InfoSection = ({ trip }) => {
-  console.log(trip);
+  const [photoUrl, setPhotoUrl] = useState("");
+
+  useEffect(() => {
+    trip && GetPlacePhoto();
+  }, [trip]);
+
+  const GetPlacePhoto = async () => {
+    const data = {
+      textQuery: trip?.userSelection?.destination?.label,
+    };
+
+    const result = await GetPlacesDetails(data).then((res) => {
+      console.log(res.data.places[0].photos[3].name);
+
+      const PhotoUrl = PHOTO_REF_URL.replace(
+        "{NAME}",
+        res.data.places[0].photos[3].name
+      );
+
+      setPhotoUrl(PhotoUrl);
+    });
+  };
+
   return (
     <div>
       <img
-        src="/placeholder.jpg"
+        src={photoUrl}
         className="h-[340px] w-full object-cover rounded-xl"
       ></img>
 
