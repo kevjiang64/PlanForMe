@@ -1,5 +1,5 @@
 import { doc, getDoc } from "firebase/firestore";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { db } from "../../service/firebaseConfig"; // Adjust the import path as necessary
 import InfoSection from "../components/InfoSection";
@@ -10,6 +10,8 @@ import PlacesToVisit from "../components/PlacesToVisit";
 const ViewTrip = () => {
   const { tripId } = useParams();
   const [trip, setTrip] = useState([]);
+
+  console.log(trip);
 
   useEffect(() => {
     GetTripData();
@@ -33,9 +35,9 @@ const ViewTrip = () => {
       {/*Info Section*/}
       <InfoSection trip={trip} />
       {/*Hotels*/}
-      <Hotels hotels={trip?.tripData?.[0]?.travelPlan?.hotelOptions} />
+      <Hotels hotels={trip?.tripData?.[0]?.hotelOptions} />
       {/*Daily Itinerary*/}
-      <PlacesToVisit itinerary={trip?.tripData?.[0]?.travelPlan?.itinerary} />
+      <PlacesToVisit itinerary={trip?.tripData?.[0]?.itinerary} />
     </div>
   );
 };

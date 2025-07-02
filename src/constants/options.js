@@ -51,6 +51,6 @@ export const SelectBudgetOptions = [
 ];
 
 export const AI_PROMPT =
-  "Generate Travel Plan for Location: {location}, for {totalDays} days for {traveler} with a {budget} budget, give me Hotels options list with Hotel Name, Hotel Address, Price, hotel image url, geo coordinates, rating, descriptions and suggest itinerary with placeName, Place Details, Place Image Url, Geo Coordinates, ticket Pricing, Time travel each of the location for {totalDays} days with each day plan with best time to visit in JSON format.";
+  "Generate Travel Plan for Location: {location}, for {totalDays} days for {traveler} travelers with a {budget} budget, give me Hotels options list with Hotel Name, Hotel Address, Price, hotel image url, geo coordinates, rating, descriptions and suggest itinerary with placeName, Place Details, Place Image Url, Geo Coordinates, ticket Pricing, Time travel, best time to visit for each of the location for {totalDays} days for each day in JSON format.";
 
 export const googleMapURL = "https://www.google.com/maps/search/?api=1&query=";

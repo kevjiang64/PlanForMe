@@ -7,15 +7,27 @@ import {
 import { googleLogout } from "@react-oauth/google";
 import { FcGoogle } from "react-icons/fc";
 import axios from "axios";
+import { useState } from "react";
+import { useGoogleLogin } from "@react-oauth/google";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 
 const Header = () => {
   const [openDialogue, setOpenDialogue] = useState(false);
+  const [loading, setLoading] = useState(false);
+
   const user = JSON.parse(localStorage.getItem("user"));
 
   const login = useGoogleLogin({
     onSuccess: (codeResponse) => {
       console.log(codeResponse);
       GetUserProfile(codeResponse);
+      setLoading(true);
     },
     onError: (error) => {
       console.error("Login Failed:", error);
@@ -42,15 +54,16 @@ const Header = () => {
   };
 
   return (
-    <div className="p-3 shadow-sm flex justify-between items-center px-5">
+    <div className="p-3 shadow-sm flex w-full justify-between items-center px-5 auto">
       <img src="/logo.svg"></img>
       <div>
         {user ? (
           <div className="flex items-center gap-3">
-            <a href="/create-trip"></a>
-            <Button variant="outline" className="rounded-full">
-              + Create Trips
-            </Button>
+            <a href="/create-trip">
+              <Button variant="outline" className="rounded-full">
+                + Create Trips
+              </Button>
+            </a>
             <a href="/my-trips">
               <Button variant="outline" className="rounded-full">
                 My Trips

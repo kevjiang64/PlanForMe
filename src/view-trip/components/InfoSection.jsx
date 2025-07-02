@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { GetPlacesDetails } from "../../service/GlobalApi";
 import { PHOTO_REF_URL } from "../../service/GlobalApi";
+import { useState } from "react";
 
 const InfoSection = ({ trip }) => {
   const [photoUrl, setPhotoUrl] = useState("");
@@ -10,18 +11,20 @@ const InfoSection = ({ trip }) => {
   }, [trip]);
 
   const GetPlacePhoto = async () => {
+    console.log(trip);
     const data = {
       textQuery: trip?.userSelection?.destination?.label,
     };
 
-    const result = await GetPlacesDetails(data).then((res) => {
-      console.log(res.data.places[0].photos[3].name);
+    console.log(data);
 
+    const result = await GetPlacesDetails(data).then((res) => {
+      console.log(res);
+      console.log(res?.data?.places[0]?.photos[3]?.name);
       const PhotoUrl = PHOTO_REF_URL.replace(
         "{NAME}",
         res.data.places[0].photos[3].name
       );
-
       setPhotoUrl(PhotoUrl);
     });
   };
@@ -46,7 +49,7 @@ const InfoSection = ({ trip }) => {
               💰 {trip.userSelection?.budget} Budget
             </h2>
             <h2 className="p-2 px-3 bg-gray-200 rounded-full text-gray-500 text-xs md:text-md">
-              🧑‍🤝‍🧑No. Of Traveler: {trip.userSelection?.members}
+              🧑‍🤝‍🧑No. Of Travelers: {trip.userSelection?.members}
             </h2>
           </div>
         </div>

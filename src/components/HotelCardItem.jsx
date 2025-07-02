@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { googleMapURL } from "../../constants/options";
+import { googleMapURL } from "../constants/options";
 import { GetPlacesDetails } from "../service/GlobalApi";
 import { PHOTO_REF_URL } from "../service/GlobalApi";
 import { useEffect, useState } from "react";

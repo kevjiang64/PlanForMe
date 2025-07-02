@@ -8,6 +8,8 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 const PlaceCardItem = ({ place }) => {
+  console.log(place);
+
   const [photoUrl, setPhotoUrl] = useState("");
 
   useEffect(() => {
@@ -31,19 +33,20 @@ const PlaceCardItem = ({ place }) => {
     });
   };
   return (
-    <Link to={googleMapURL + place.placeName} target="_blank">
+    <Link to={googleMapURL + place?.placeName} target="_blank">
+      <h2 className="font-medium text-sm text-orange-600 mt-3">
+        {place.bestTimeToVisit}
+      </h2>
       <div className="border rounded-xl p-3 mt-2 flex gap-5 hover:shadow-md hover:scale-105 transition-all cursor-pointer">
         <img
           src={photoUrl}
           className="w-[130px] h-[130px] rounded-xl obj-cover"
         />
         <div>
-          <h2 className="font-bold text-lg">{place.placeName}</h2>
-          <p className="text-sm text-gray-400">{place.placeDetails}</p>
-          <h2 className="mt-2">🕧 {place.timeToTravel}</h2>
-          <Button size="sm">
-            <FaMapLocationDot />
-          </Button>
+          <h2 className="font-bold text-lg">{place?.placeName}</h2>
+          <h2 className="text-sm text-gray-400">{place?.placeDetails}</h2>
+          <h2 className="mt-3 text-sm">🕧 {place?.timeTravel}</h2>
+          <h2 className="text-sm">💸 {place?.ticketPricing}</h2>
         </div>
       </div>
     </Link>
